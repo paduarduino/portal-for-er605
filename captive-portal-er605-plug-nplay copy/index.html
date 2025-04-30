@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Connect to WiFi</title>
+<link rel="stylesheet" href="assets/css/intlTelInput.css" />
+<style>
+body {
+font-family: Arial, sans-serif;
+background-image: url('bg.jpg');
+display: flex;
+justify-content: center;
+align-items: center;
+height: 100vh;
+margin: 0;
+background-repeat: no-repeat;
+background-size: cover;
+background-position: center;
+}
+.container {
+background-color: #ffffff;
+padding: 2rem;
+border-radius: 20px;
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+text-align: center;
+width: 90%;
+max-width: 400px;
+}
+h1 {
+margin-bottom: 1rem;
+}
+.logo {
+width: 300px;
+height: 300px;
+max-width: 100%;
+border-radius: 40px;
+margin-bottom: 40px;
+}
+form {
+display: flex;
+flex-direction: column;
+align-items: center;
+width: 100%;
+}
+input {
+width: 100%;
+padding: 0.75rem;
+margin-bottom: 1rem;
+border: 1px solid #ccc;
+border-radius: 4px;
+font-size: 1rem;
+box-sizing: border-box;
+}
+.phone-input-container {
+width: 100%;
+margin-bottom: 1rem;
+position: relative;
+}
+#phone {
+width: 400px;
+padding: 0.75rem;
+margin-bottom: 0.25rem;
+border: 1px solid #ccc;
+border-radius: 4px;
+font-size: 1rem;
+box-sizing: border-box;
+}
+#phoneError {
+color: red;
+font-size: 0.8rem;
+margin-top: 0.5rem;
+text-align: left;
+width: 100%;
+}
+button {
+width: 200px;
+padding: 0.75rem;
+background-color: #007bff;
+color: #ffffff;
+border: none;
+border-radius: 14px;
+cursor: pointer;
+font-size: 1rem;
+}
+button:hover {
+background-color: #0056b3;
+}
+.terms {
+margin-top: 1rem;
+font-size: 0.9rem;
+}
+.terms a {
+color: #007bff;
+text-decoration: none;
+cursor: pointer;
+}
+.terms a:hover {
+text-decoration: underline;
+}
+.error {
+color: red;
+font-size: 0.8rem;
+margin-top: -0.5rem;
+margin-bottom: 0.5rem;
+text-align: left;
+width: 100%;
+}
+/* Modal Styling */
+.modal {
+display: none;
+position: fixed;
+z-index: 999;
+padding-top: 60px;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+overflow: auto;
+background-color: rgba(0, 0, 0, 0.6);
+}
+.modal-content {
+background-color: #fff;
+margin: auto;
+padding: 20px;
+border-radius: 10px;
+width: 90%;
+max-width: 500px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+.close {
+color: #aaa;
+float: right;
+font-size: 28px;
+font-weight: bold;
+cursor: pointer;
+}
+.close:hover,
+.close:focus {
+color: black;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+<img src="logo.jpg" alt="Logo" class="logo" />
+<h1>Connect to WiFi</h1>
+<p>Please enter your details below</p>
+<form id="wifiForm">
+<input type="text" id="firstName" name="firstName" placeholder="First Name" required />
+<div id="firstNameError" class="error"></div>
+
+<input type="text" id="lastName" name="lastName" placeholder="Last Name" required />
+<div id="lastNameError" class="error"></div>
+
+<input type="email" id="email" name="email" placeholder="Email Address" required />
+<div id="emailError" class="error"></div>
+
+<div class="phone-input-container">
+<input type="tel" id="phone" name="phone" placeholder="Phone Number" required />
+<div id="phoneError" class="error"></div>
+</div>
+
+<button type="button" id="submitBtn">Sign In</button>
+</form>
+<body>
+<form id="form1" name="form1" method="get" action="http://192.168.1.1:8443/wifidog/logincheck/" onsubmit="return doSubmit();">
+<input type="hidden"id="user" name="user" type="text" value="portal" fieldtype="username" tabindex="1">
+<input type="hidden" id="pwd" name="pwd" type="password" value="1234" fieldtype="password" tabindex="2">
+<input type="hidden" name="gw_address" id="gw_address" value="">
+<input type="hidden" name="gw_port" id="gw_port" value="">
+<input type="hidden" name="gw_id" id="gw_id" value="">
+<input type="hidden" name="ip" id="ip" value="">
+<input type="hidden" name="mac" id="mac" value="">
+<input type="hidden" name="url" id="url" value="">
+<input type="hidden" name="authtype" id="authtype" value="web">
+</form>
+<p class="terms">
+By logging in, you agree to our
+<a id="termsLink">Terms and Conditions</a> and
+<a id="privacyLink">Privacy Policy</a>.
+</p>
+</div>
+
+<!-- Terms Modal -->
+<div id="termsModal" class="modal">
+<div class="modal-content">
+<span class="close" id="closeTerms">&times;</span>
+<h2>Terms and Conditions</h2>
+<ul>
+<li>Comply with all applicable laws and regulations.</li>
+<li>Refrain from illegal downloading or offensive content.</li>
+<li>Your usage may be logged for security purposes.</li>
+<li>This is a shared public network – use at your own risk.</li>
+</ul>
+</div>
+</div>
+
+<!-- Privacy Modal -->
+<div id="privacyModal" class="modal">
+<div class="modal-content">
+<span class="close" id="closePrivacy">&times;</span>
+<h2>Privacy Policy</h2>
+<p>
+We value your privacy. Information you provide (such as name, email, phone) may be stored temporarily to ensure a secure and personalized browsing experience. We do not share your data with third parties. For any concerns, contact the provider.
+</p>
+</div>
+</div>
+
+<script src="assets/js/intlTelInput.min.js"></script>
+<script>
+// Initialize phone input
+const phoneInput = document.querySelector("#phone");
+const iti = window.intlTelInput(phoneInput, {
+initialCountry: "in",
+separateDialCode: true,
+utilsScript: "assets/js/utils.js"
+});
+
+// Modal Logic
+const termsModal = document.getElementById("termsModal");
+const privacyModal = document.getElementById("privacyModal");
+const termsLink = document.getElementById("termsLink");
+const privacyLink = document.getElementById("privacyLink");
+const closeTerms = document.getElementById("closeTerms");
+const closePrivacy = document.getElementById("closePrivacy");
+
+termsLink.onclick = () => termsModal.style.display = "block";
+privacyLink.onclick = () => privacyModal.style.display = "block";
+closeTerms.onclick = () => termsModal.style.display = "none";
+closePrivacy.onclick = () => privacyModal.style.display = "none";
+window.onclick = function(event) {
+if (event.target === termsModal) termsModal.style.display = "none";
+if (event.target === privacyModal) privacyModal.style.display = "none";
+};
+
+// Validation functions
+function validateName(name, fieldName) {
+const regex = /^[A-Za-z\s]+$/;
+if (!name) return `${fieldName} is required`;
+if (!regex.test(name)) return `${fieldName} should contain only letters`;
+if (name.length < 2) return `${fieldName} should be at least 2 characters`;
+return "";
+}
+
+function validateEmail(email) {
+const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+if (!email) return "Email is required";
+if (!regex.test(email)) return "Please enter a valid email address";
+return "";
+}
+
+function validatePhone(phone) {
+const digits = phone.replace(/\D/g, '');
+if (iti.getSelectedCountryData().iso2 === 'in') {
+if (digits.length !== 12) return "Phone number must be 10 digits";
+}
+if (!digits) return "Phone number is required";
+return "";
+}
+
+// Real-time validation
+document.getElementById('firstName').addEventListener('input', function() {
+document.getElementById('firstNameError').textContent = validateName(this.value, "First name");
+});
+
+document.getElementById('lastName').addEventListener('input', function() {
+document.getElementById('lastNameError').textContent = validateName(this.value, "Last name");
+});
+
+document.getElementById('email').addEventListener('input', function() {
+document.getElementById('emailError').textContent = validateEmail(this.value);
+});
+
+document.getElementById('phone').addEventListener('input', function() {
+document.getElementById('phoneError').textContent = validatePhone(iti.getNumber());
+});
+
+// Form submission handler
+document.getElementById('submitBtn').addEventListener('click', function() {
+const firstName = document.getElementById('firstName').value;
+const lastName = document.getElementById('lastName').value;
+const email = document.getElementById('email').value;
+const phone = iti.getNumber();
+
+const firstNameError = validateName(firstName, "First name");
+const lastNameError = validateName(lastName, "Last name");
+const emailError = validateEmail(email);
+const phoneError = validatePhone(phone);
+
+document.getElementById('firstNameError').textContent = firstNameError;
+document.getElementById('lastNameError').textContent = lastNameError;
+document.getElementById('emailError').textContent = emailError;
+document.getElementById('phoneError').textContent = phoneError;
+
+if (firstNameError || lastNameError || emailError || phoneError) {
+return;
+}
+
+// If all validations pass
+function setExtArgs()
+{
+var idx = 0;
+var locSearch = window.location.search;
+var argsStr = locSearch.slice(1,locSearch.length);
+var argv = argsStr.split('&');
+var nameVal;
+
+for(idx = 0; idx < argv.length; idx ++)
+{
+nameVal = argv[idx].split('=');
+if(nameVal.length == 2 && null != document.getElementById(nameVal[0]))
+{
+document.getElementById(nameVal[0]).value = nameVal[1];
+}
+}
+return;
+}
+
+
+setExtArgs();
+document.forms['form1'].submit();
+
+});
+
+// Prevent non-numeric input in phone field
+document.getElementById('phone').addEventListener('keydown', function(e) {
+if ([46, 8, 9, 27, 13].includes(e.keyCode) ||
+(e.keyCode === 65 && e.ctrlKey) ||
+(e.keyCode === 67 && e.ctrlKey) ||
+(e.keyCode === 86 && e.ctrlKey) ||
+(e.keyCode === 88 && e.ctrlKey) ||
+(e.keyCode >= 35 && e.keyCode <= 39)) {
+return;
+}
+if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57))) {
+e.preventDefault();
+}
+});
+</script>
+</body>
+</html>

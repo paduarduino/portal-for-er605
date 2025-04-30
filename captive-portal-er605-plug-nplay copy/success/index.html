@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WiFi Authentication</title>
+<style>
+body {
+font-family: Arial, sans-serif;
+display: flex;
+justify-content: center;
+align-items: center;
+height: 100vh;
+margin: 0;
+background: linear-gradient(135deg, #4CAF50, #2E7D32);
+color: white;
+text-align: center;
+}
+.success-box {
+background: rgba(255, 255, 255, 0.1);
+backdrop-filter: blur(10px);
+padding: 2rem;
+border-radius: 15px;
+box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+max-width: 400px;
+width: 90%;
+}
+.checkmark {
+font-size: 4rem;
+margin-bottom: 1rem;
+animation: bounce 0.5s;
+}
+.countdown {
+font-size: 1.2rem;
+margin-top: 1.5rem;
+}
+@keyframes bounce {
+0%, 100% { transform: scale(1); }
+50% { transform: scale(1.2); }
+}
+</style>
+</head>
+<body>
+<!-- Hidden authentication form -->
+<iframe name="hiddenFrame" style="display:none;"></iframe>
+<form id="authForm" method="get" action="http://192.168.1.1:8443/wifidog/logincheck/" target="hiddenFrame" style="display:none;">
+<input name="user" value="Bujji">
+<input name="pwd" value="1234">
+<input name="gw_address" id="gw_address" value="">
+<input name="gw_port" id="gw_port" value="">
+<input name="gw_id" id="gw_id" value="">
+<input name="ip" id="ip" value="">
+<input name="mac" id="mac" value="">
+<input name="url" id="url" value="">
+<input name="authtype" value="web">
+</form>
+
+<!-- Connection status display -->
+<div class="success-box">
+<div class="checkmark">✓</div>
+<h1 id="statusMessage">Connecting to WiFi...</h1>
+<p id="statusDetail">Please wait while we authenticate your device</p>
+<div class="countdown">Closing in <span id="countdown">5</span> seconds...</div>
+</div>
+
+<script>
+// Execute immediately when page loads
+(function() {
+// 1. Parse URL parameters
+const params = new URLSearchParams(window.location.search);
+
+// 2. Update form fields from URL parameters
+params.forEach((value, key) => {
+const field = document.getElementById(key);
+if (field) field.value = decodeURIComponent(value);
+});
+
+// 3. Submit form (using iframe target to avoid page navigation)
+document.getElementById('authForm').submit();
+
+// 4. Update UI to show success
+document.getElementById('statusMessage').textContent = "WiFi Connected!";
+document.getElementById('statusDetail').textContent = "Authentication successful";
+
+// 5. Start countdown to close
+let seconds = 5;
+const timer = setInterval(() => {
+document.getElementById('countdown').textContent = --seconds;
+if (seconds <= 0) {
+clearInterval(timer);
+try {
+window.close();
+if (!window.closed) {
+window.location.href = 'about:blank';
+setTimeout(() => {
+if (!window.closed) {
+document.body.innerHTML = '<h1>You may now close this window</h1>';
+}
+}, 500);
+}
+} catch (e) {
+document.body.innerHTML = '<h1>Connection successful! You may now close this window.</h1>';
+}
+}
+}, 1000);
+})();
+</script>
+</body>
+</html>
